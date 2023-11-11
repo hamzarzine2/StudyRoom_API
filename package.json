@@ -2,18 +2,21 @@
   "name": "api",
   "version": "1.0.0",
   "description": "the api for the studyRoom project",
-  "main": "index.js",
+  "main": "socketServer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "run": "node socketServer.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@socket.io/admin-ui": "^0.5.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "node-json-db": "^2.3.0",
     "prettier": "^3.0.3",
     "socket.io": "^4.7.2"
-  }
+  },
+  "devDependencies": {}
 }
