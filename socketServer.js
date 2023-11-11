@@ -27,14 +27,10 @@ io.on("connection", (socket) => {
   };
 
   socket.on("join room", (room) => {
+    disconnectIfConnected();
     console.log("join  ", room);
     socket.join(room);
     joinedRoom = room;
-  });
-
-  socket.on("todolist element", (message) => {
-    // db.push(`room${joinedRoom}/`);
-    io.to(joinedRoom).emit("todolist element", message); // Diffusez le message à tous les clients connectés
   });
 
   socket.on("chat message", (message) => {
