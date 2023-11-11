@@ -1,7 +1,8 @@
+const {instrument} = require("@socket.io/admin-ui")
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const express = require("express");
-import { JsonDB, Config } from 'node-json-db';
+const { JsonDB, Config } = require ('node-json-db');
 
 const app = express();
 const httpServer = createServer(app);
@@ -10,9 +11,9 @@ const db = new JsonDB(new Config("room_data", true, false, '/'));
 const io = new Server(httpServer, {
   cors: {
     origin: "*", // Autorisez toutes les origines
-    methods: ["GET", "POST"],
   },
 });
+instrument(io,{auth:false})
 
 io.on("connection", (socket) => {
   let joinedRoom = -1;
@@ -27,7 +28,8 @@ io.on("connection", (socket) => {
 
   socket.on("join room", (roomID) => {
     disconnectIfConnected();
-    socket.join(`room${roomID}`);
+    console.log(roomID);
+    socket.join(roomID);
     joinedRoom = roomID;
   });
 
@@ -37,8 +39,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chat message", (message) => {
-    db.push(`room${joinedRoom}/messages`, [...db.getData(`room${joinedRoom}/messages`), ]);
-    io.to(`room${joinedRoom}`).emit("chat message", message); // Diffusez le message à tous les clients connectés
+    console.log("watashi ga kita");
+    console.log(joinedRoom);
+    const defaultMessages = db.getObjectDefault(`room${joinedRoom}/messages`, [1, 2, 3]) || [];
+    db.push(`${joinedRoom}/messages`, defaultMessages);    
+    io.to(joinedRoom).emit("chat message", "ningazazgzae GA KITA"); // Diffusez le message à tous les clients connectés
   });
 
   socket.on("disconnect", () => {
@@ -51,3 +56,7 @@ const port = 4001; // Port sur lequel votre serveur Socket.io écoutera
 httpServer.listen(port, () => {
   console.log(`Le serveur Socket.io écoute sur le port ${port}`);
 });
+
+
+
+
