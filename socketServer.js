@@ -3,6 +3,7 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const express = require("express");
 const { JsonDB, Config } = require ('node-json-db');
+const { log } = require("console");
 
 const app = express();
 const httpServer = createServer(app);
@@ -41,9 +42,16 @@ io.on("connection", (socket) => {
     console.log(room);
     const defaultMessages = db.getObjectDefault(`room${joinedRoom}/messages`, [1, 2, 3]) || [];
     db.push(`${joinedRoom}/messages`, defaultMessages);    
+    socket.to(room).emit("chat message", "ningazazgzae GA KITA");
     socket.broadcast.emit("chat message",'TOUT LE MONDE')
-    socket.to(room).emit("chat message", "ningazazgzae GA KITA"); // Diffusez le message à tous les clients connectés
   });
+
+
+  socket.on("update-socket",(toDoList,room) =>{
+    console.log(toDoList);
+    socket.to(room).emit("update-socket",toDoList);
+  })
+
 
   socket.on("disconnect", () => {
     disconnectIfConnected();

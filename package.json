@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
-    "start": "nodemon library-backend.js"
+    "run": "node socketServer.js"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +19,5 @@
     "socket.io": "^4.7.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
   }
 }
