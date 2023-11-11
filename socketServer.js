@@ -26,11 +26,9 @@ io.on("connection", (socket) => {
     }
   }
 
-  socket.on("join room", (roomID) => {
-    disconnectIfConnected();
-    console.log(roomID);
-    socket.join(roomID);
-    joinedRoom = roomID;
+  socket.on("join room", (room) => {
+    console.log('join  ',room);
+    socket.join(room);
   });
 
   socket.on("todolist element", (message) =>  {
@@ -38,12 +36,13 @@ io.on("connection", (socket) => {
     io.to(`room${joinedRoom}`).emit("todolist element", message); // Diffusez le message à tous les clients connectés
   });
 
-  socket.on("chat message", (message) => {
-    console.log("watashi ga kita");
-    console.log(joinedRoom);
+  socket.on("chat message", (message,room) => {
+    console.log(message);
+    console.log(room);
     const defaultMessages = db.getObjectDefault(`room${joinedRoom}/messages`, [1, 2, 3]) || [];
     db.push(`${joinedRoom}/messages`, defaultMessages);    
-    io.to(joinedRoom).emit("chat message", "ningazazgzae GA KITA"); // Diffusez le message à tous les clients connectés
+    socket.broadcast.emit("chat message",'TOUT LE MONDE')
+    socket.to(room).emit("chat message", "ningazazgzae GA KITA"); // Diffusez le message à tous les clients connectés
   });
 
   socket.on("disconnect", () => {
