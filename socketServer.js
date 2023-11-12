@@ -2,14 +2,12 @@ const { instrument } = require("@socket.io/admin-ui");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const express = require("express");
-const { JsonDB, Config } = require("node-json-db");
-const { log } = require("console");
 
 const app = express();
 const httpServer = createServer(app);
-const db = new JsonDB(new Config("room_data", true, false, "/"));
 
 const io = new Server(httpServer, {
+  connectionStateRecovery: {},
   cors: {
     origin: "*", // Autorisez toutes les origines
   },
@@ -21,29 +19,33 @@ io.on("connection", (socket) => {
 
   const disconnectIfConnected = () => {
     if (joinedRoom != -1) {
-      socket.leave(`room${joinedRoom}`);
+      socket.leave(joinedRoom);
       joinedRoom = -1;
     }
   };
 
-  socket.on("join room", (room) => {
+  // Fait penser à un 3-way handshake
+  // Moyen de communication en peer-to-peer, pour éviter de stocker le serveur
+  socket.on("join room", async (room) => {
     disconnectIfConnected();
-    console.log("join  ", room);
+    const sockets = await io.in(room).fetchSockets();
     socket.join(room);
+
+    if (sockets.length !== 0)
+      io.to(sockets[0].id).emit("get-todolist", socket.id);
+
     joinedRoom = room;
   });
 
+  socket.on("return-todolist", (toDoList, socketId) => {
+    io.to(socketId).emit("updated-todolist", toDoList);
+  });
+
   socket.on("chat message", (message) => {
-    console.log(message);
-    console.log(joinedRoom);
-    /*const defaultMessages =
-      db.getObjectDefault(`room${joinedRoom}/messages`, [1, 2, 3]) || [];
-    db.push(`${joinedRoom}/messages`, defaultMessages); */
     io.to(joinedRoom).emit("chat message", message);
   });
 
   socket.on("update-todolist", (toDoList) => {
-    console.log(toDoList, joinedRoom);
     io.to(joinedRoom).emit("updated-todolist", toDoList);
   });
 
