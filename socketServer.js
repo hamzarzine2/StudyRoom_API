@@ -11,6 +11,7 @@ const io = new Server(httpServer, {
   cors: {
     origin: "*", // Autorisez toutes les origines
   },
+  transports: ["websocket"],
 });
 
 io.on("connection", (socket) => {
