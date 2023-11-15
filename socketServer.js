@@ -31,8 +31,10 @@ io.on("connection", (socket) => {
     const sockets = await io.in(room).fetchSockets();
     socket.join(room);
 
-    if (sockets.length !== 0)
+    if (sockets.length !== 0) {
       io.to(sockets[0].id).emit("get-todolist", socket.id);
+      io.to(sockets[0].id).emit("get-chat", socket.id);
+    }
 
     joinedRoom = room;
   });
@@ -41,12 +43,16 @@ io.on("connection", (socket) => {
     io.to(socketId).emit("updated-todolist", toDoList);
   });
 
-  socket.on("chat message", (message) => {
-    io.to(joinedRoom).emit("chat message", message);
-  });
-
   socket.on("update-todolist", (toDoList) => {
     io.to(joinedRoom).emit("updated-todolist", toDoList);
+  });
+
+  socket.on("return-chat", (chat, socketId) => {
+    io.to(socketId).emit("updated-chat", chat);
+  });
+
+  socket.on("update-chat", (chat) => {
+    io.to(joinedRoom).emit("updated-chat", chat);
   });
 
   socket.on("disconnect", () => {
