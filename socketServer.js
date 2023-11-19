@@ -35,6 +35,7 @@ io.on("connection", (socket) => {
     if (sockets.length !== 0) {
       io.to(sockets[0].id).emit("get-todolist", socket.id);
       io.to(sockets[0].id).emit("get-chat", socket.id);
+      io.to(sockets[0].id).emit("get-background", socket.id);
     }
 
     joinedRoom = room;
@@ -56,10 +57,20 @@ io.on("connection", (socket) => {
     io.to(joinedRoom).emit("updated-chat", chat);
   });
 
+  socket.on("return-background", (background, socketId) => {
+    io.to(socketId).emit("updated-background", background);
+  });
+
+  socket.on("update-background", (background) => {
+    io.to(joinedRoom).emit("updated-background", background);
+  });
+
   socket.on("disconnect", () => {
     disconnectIfConnected();
     console.log("Client déconnecté");
   });
+
+
 });
 
 const port = 4001; // Port sur lequel votre serveur Socket.io écoutera
