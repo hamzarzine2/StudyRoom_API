@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
     disconnectIfConnected();
     const sockets = await io.in(room).fetchSockets();
     socket.join(room);
-
+    console.log("Client connecté à la room " + room);
     if (sockets.length !== 0) {
       io.to(sockets[0].id).emit("get-todolist", socket.id);
       io.to(sockets[0].id).emit("get-chat", socket.id);
@@ -46,7 +46,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("update-todolist", (toDoList) => {
-    io.to(joinedRoom).emit("updated-todolist", toDoList);
+    console.log("return-todolist = " , toDoList);
+    console.log("joinedRoom = " , joinedRoom);
+    socket.broadcast.to(joinedRoom).emit("updated-todolist", toDoList);
   });
 
   socket.on("return-chat", (chat, socketId) => {
@@ -58,11 +60,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("return-background", (background, socketId) => {
+    console.log("return-background = " , background);
     io.to(socketId).emit("updated-background", background);
   });
 
   socket.on("update-background", (background) => {
-    io.to(joinedRoom).emit("updated-background", background);
+    console.log("return-background = " , background);
+    socket.broadcast.to(joinedRoom).emit("updated-background", background);
+    //to sent to everyone in the room but the one that emited first
   });
 
   socket.on("disconnect", () => {
