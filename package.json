@@ -17,6 +17,5 @@
     "node-json-db": "^2.3.0",
     "prettier": "^3.0.3",
     "socket.io": "^4.7.2"
-  },
-  "devDependencies": {}
+  }
 }

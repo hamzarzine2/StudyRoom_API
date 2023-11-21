@@ -7,11 +7,12 @@ const app = express();
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
-  connectionStateRecovery: {},
   cors: {
-    origin: "*", // Autorisez toutes les origines
+    origin: ["https://admin.socket.io","*"],
+    methods: ["GET", "POST"],
+    credentials: true
   },
-  transports: ["websocket"],
+  transports: ["websocket", "polling"],
 });
 
 io.on("connection", (socket) => {
@@ -78,9 +79,10 @@ io.on("connection", (socket) => {
 
 });
 
+instrument(io, { auth: false });
+
 const port = 4001; // Port sur lequel votre serveur Socket.io écoutera
 httpServer.listen(port, () => {
   console.log(`Le serveur Socket.io écoute sur le port ${port}`);
 });
 
-instrument(io, { auth: false });
