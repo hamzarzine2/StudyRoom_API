@@ -2,6 +2,7 @@ const { instrument } = require("@socket.io/admin-ui");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const express = require("express");
+const { log } = require("console");
 
 const app = express();
 const httpServer = createServer(app);
@@ -87,4 +88,25 @@ const port = 4001; // Port sur lequel votre serveur Socket.io écoutera
 httpServer.listen(port, () => {
   console.log(`Le serveur Socket.io écoute sur le port ${port}`);
 });
+
+
+
+
+const userIo = io.of("/user");
+
+userIo.on("connection-userSpace", (socket) => {
+  log("New User Connected to user space");
+});
+
+
+userIo.use((socket, next) => {
+  const username = socket.handshake.auth.username;
+  if (!username) {
+    return next(new Error("invalid username"));
+  }
+  socket.username = username;
+  next();
+});
+
+
 
