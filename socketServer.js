@@ -9,7 +9,18 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: ["https://admin.socket.io","*"],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (origin.includes("127.0.0.1:")) {
+        callback(null, true);
+      } else if (origin === "https://admin.socket.io") {
+        // Allow requests from the specified origin
+        callback(null, true);
+      } else {
+        // Block all other origins
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST"],
     credentials: true
   },
@@ -84,6 +95,27 @@ io.on("connection", (socket) => {
 
 instrument(io, { auth: false });
 
+
+const userIo = io.of("/user");
+
+userIo.on("connection", (socket) => {
+  console.log("New User Connected to user space");
+});
+
+
+userIo.use((socket, next) => {
+  log("userIo.use");
+  console.log( socket.handshake.auth);
+  const username = socket.handshake.auth.user;
+  console.log("username = " , username);
+  if (!username) {
+    return next(new Error("invalid username"));
+  }
+  socket.username = username;
+  console.log("username = " , username);
+  next();
+});
+
 const port = 4001; // Port sur lequel votre serveur Socket.io écoutera
 httpServer.listen(port, () => {
   console.log(`Le serveur Socket.io écoute sur le port ${port}`);
@@ -91,22 +123,6 @@ httpServer.listen(port, () => {
 
 
 
-
-const userIo = io.of("/user");
-
-userIo.on("connection-userSpace", (socket) => {
-  log("New User Connected to user space");
-});
-
-
-userIo.use((socket, next) => {
-  const username = socket.handshake.auth.username;
-  if (!username) {
-    return next(new Error("invalid username"));
-  }
-  socket.username = username;
-  next();
-});
 
 
 
