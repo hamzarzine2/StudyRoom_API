@@ -48,7 +48,6 @@ io.on("connection", (socket) => {
     if (sockets.length !== 0) {
       io.to(sockets[0].id).emit("get-todolist", socket.id);
       io.to(sockets[0].id).emit("get-chat", socket.id);
-      io.to(sockets[0].id).emit("get-custom", socket.id);
     }
 
     joinedRoom = room;
@@ -70,18 +69,6 @@ io.on("connection", (socket) => {
 
   socket.on("update-chat", (chat) => {
     io.to(joinedRoom).emit("updated-chat", chat);
-  });
-
-   
-  socket.on("return-custom", (custom, socketId) => {
-    console.log("return-custom = " , custom);
-    io.to(socketId).emit("updated-custom", custom);
-  });
-
-  socket.on("update-custom", (custom) => {
-    console.log("return-custom = " , custom);
-    socket.broadcast.to(joinedRoom).emit("updated-custom", custom);
-    //to sent to everyone in the room but the one that emited first
   });
 
   
