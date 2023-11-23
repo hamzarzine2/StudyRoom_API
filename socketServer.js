@@ -25,6 +25,27 @@ const io = new Server(httpServer, {
     credentials: true
   },
   transports: ["websocket", "polling"],
+  /*
+  maxHttpBufferSize: 1e7 Définit la taille maximale autorisée pour les paquets HTTP.
+  pingTimeout: 5000, définit le temps d'attente avant de considérer qu'une connexion est perdue.
+  pingInterval: 10000, définit la fréquence d'émission des sondes de ping.
+  
+  cookie: {                 Options pour la gestion des cookies de session.
+  domain: ".example.com",
+  httpOnly: true,
+  secure: true
+  }
+
+  allowRequest: (req, callback) => { 
+  const isValid = checkIfValid(req); Fonction qui détermine si une demande doit être autorisée à se connecter.
+  callback(null, isValid);
+  }
+  httpCompression: {
+    threshold: 1024 Active ou désactive la compression des messages HTTP.
+
+  }
+  
+  */
 });
 
 io.on("connection", (socket) => {
