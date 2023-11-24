@@ -80,7 +80,6 @@ io.on("connection", (socket) => {
 
   socket.on("update-todolist", (toDoList) => {
     console.log("return-todolist = " , toDoList);
-    console.log("joinedRoom = " , joinedRoom);
     socket.broadcast.to(joinedRoom).emit("updated-todolist", toDoList);
   });
 
@@ -89,7 +88,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("update-chat", (chat) => {
-    io.to(joinedRoom).emit("updated-chat", chat);
+    socket.broadcast.to(joinedRoom).emit("updated-chat", chat);
   });
 
   
