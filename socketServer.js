@@ -11,7 +11,7 @@ const io = new Server(httpServer, {
   cors: {
     origin: function (origin, callback) {
       // Allow requests with no origin (like mobile apps or curl requests)
-      if (origin.includes("127.0.0.1:")) {
+      if (origin.includes("127.0.0.1:") || origin.includes("localhost:")) {
         callback(null, true);
       } else if (origin === "https://admin.socket.io") {
         // Allow requests from the specified origin
@@ -24,7 +24,7 @@ const io = new Server(httpServer, {
     methods: ["GET", "POST"],
     credentials: true
   },
-  transports: ["websocket", "polling"],
+ 
   /*
   maxHttpBufferSize: 1e7 Définit la taille maximale autorisée pour les paquets HTTP.
   pingTimeout: 5000, définit le temps d'attente avant de considérer qu'une connexion est perdue.
