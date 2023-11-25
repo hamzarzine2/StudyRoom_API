@@ -102,13 +102,11 @@ io.on("connection", (socket) => {
 
 instrument(io, { auth: false });
 
-
 const userIo = io.of("/user");
 
 userIo.on("connection", (socket) => {
   console.log("New User Connected to user space");
 });
-
 
 userIo.use((socket, next) => {
   log("userIo.use");
