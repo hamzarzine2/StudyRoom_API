@@ -24,7 +24,7 @@ const io = new Server(httpServer, {
     methods: ["GET", "POST"],
     credentials: true
   },
- 
+  transports: ["websocket", "polling"],
   /*
   maxHttpBufferSize: 1e7 Définit la taille maximale autorisée pour les paquets HTTP.
   pingTimeout: 5000, définit le temps d'attente avant de considérer qu'une connexion est perdue.
